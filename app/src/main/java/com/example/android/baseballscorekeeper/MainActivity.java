@@ -57,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
      * Adds 1 out for Home team and changes to bottom of the inning on the third out
      */
     public void addOutForHomeTeam(View view) {
-        String msg = "Outs: ";
         outs++;
 
         if(outs == 3) {
@@ -108,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
      * displays The Inning text for both teams and sets buttons as disabled or enabled
      */
     public void displayInning() {
-        String msg = "";
+        String msg;
 
         if (isTop) {
             msg = "Inning: Top " + inning;
