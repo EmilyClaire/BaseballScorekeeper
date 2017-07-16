@@ -11,16 +11,13 @@ public class MainActivity extends AppCompatActivity {
     private int scoreAway = 0;
     private int outs = 0;
     private int inning = 1;
+    private boolean isTop = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        displayHomeScore(scoreHome);
-        displayAwayScore(scoreAway);
-        displayHomeOuts();
-        displayAwayOuts();
-        displayTopInning();
+        displayInning();
     }
 
     /**
@@ -65,7 +62,8 @@ public class MainActivity extends AppCompatActivity {
 
         if(outs == 3) {
             outs = 0;
-            displayBottomInning();
+            isTop = false;
+            displayInning();
             displayAwayOuts();
         }
 
@@ -76,13 +74,13 @@ public class MainActivity extends AppCompatActivity {
      * Adds 1 out for the Away team and changes to top of the next inning on the third out
      */
     public void addOutForAwayTeam(View view) {
-        String msg = "Outs: ";
         outs++;
 
         if(outs == 3) {
             outs = 0;
             inning++;
-            displayTopInning();
+            isTop = true;
+            displayInning();
             displayHomeOuts();
         }
 
@@ -107,48 +105,47 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * displays The top of the inning
+     * displays The Inning text for both teams and sets buttons as disabled or enabled
      */
-    public void displayTopInning() {
-        String msg = "Inning: Top " + inning;
+    public void displayInning() {
+        String msg = "";
+
+        if (isTop) {
+            msg = "Inning: Top " + inning;
+
+            Button btnAwayRun = (Button) findViewById(R.id.away_run_btn);
+            btnAwayRun.setEnabled(false);
+
+            Button btnAwayOut = (Button) findViewById(R.id.away_out_btn);
+            btnAwayOut.setEnabled(false);
+
+            Button btnHomeRun = (Button) findViewById(R.id.home_run_btn);
+            btnHomeRun.setEnabled(true);
+
+            Button btnHomeOut = (Button) findViewById(R.id.home_out_btn);
+            btnHomeOut.setEnabled(true);
+
+        } else {
+            msg = "Inning: Bot " + inning;
+
+            Button btnAwayRun = (Button) findViewById(R.id.away_run_btn);
+            btnAwayRun.setEnabled(true);
+
+            Button btnAwayOut = (Button) findViewById(R.id.away_out_btn);
+            btnAwayOut.setEnabled(true);
+
+            Button btnHomeRun = (Button) findViewById(R.id.home_run_btn);
+            btnHomeRun.setEnabled(false);
+
+            Button btnHomeOut = (Button) findViewById(R.id.home_out_btn);
+            btnHomeOut.setEnabled(false);
+        }
+
         TextView inningHomeView = (TextView) findViewById(R.id.team_home_inning);
         inningHomeView.setText(msg);
 
         TextView inningAwayView = (TextView) findViewById(R.id.team_away_inning);
         inningAwayView.setText(msg);
-
-        Button btnAwayRun = (Button) findViewById(R.id.away_run_btn);
-        btnAwayRun.setEnabled(false);
-
-        Button btnAwayOut = (Button) findViewById(R.id.away_out_btn);
-        btnAwayOut.setEnabled(false);
-
-        Button btnHomeRun = (Button) findViewById(R.id.home_run_btn);
-        btnHomeRun.setEnabled(true);
-
-        Button btnHomeOut = (Button) findViewById(R.id.home_out_btn);
-        btnHomeOut.setEnabled(true);
-    }
-
-    public void displayBottomInning() {
-        String msg = "Inning: Bot " + inning;
-        TextView inningHomeView = (TextView) findViewById(R.id.team_home_inning);
-        inningHomeView.setText(msg);
-
-        TextView inningAwayView = (TextView) findViewById(R.id.team_away_inning);
-        inningAwayView.setText(msg);
-
-        Button btnAwayRun = (Button) findViewById(R.id.away_run_btn);
-        btnAwayRun.setEnabled(true);
-
-        Button btnAwayOut = (Button) findViewById(R.id.away_out_btn);
-        btnAwayOut.setEnabled(true);
-
-        Button btnHomeRun = (Button) findViewById(R.id.home_run_btn);
-        btnHomeRun.setEnabled(false);
-
-        Button btnHomeOut = (Button) findViewById(R.id.home_out_btn);
-        btnHomeOut.setEnabled(false);
     }
 
     /**
@@ -159,11 +156,46 @@ public class MainActivity extends AppCompatActivity {
         scoreAway = 0;
         outs = 0;
         inning = 1;
+        isTop = true;
 
         displayHomeScore(scoreHome);
         displayAwayScore(scoreAway);
         displayHomeOuts();
         displayAwayOuts();
-        displayTopInning();
+        displayInning();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+
+        savedInstanceState.putInt("scoreHome", scoreHome);
+        savedInstanceState.putInt("scoreAway", scoreAway);
+        savedInstanceState.putInt("outs", outs);
+        savedInstanceState.putInt("inning", inning);
+        savedInstanceState.putBoolean("isTop", isTop);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        // Restore UI state from the savedInstanceState.
+        // This bundle has also been passed to onCreate.
+
+        scoreHome = savedInstanceState.getInt("scoreHome");
+        scoreAway = savedInstanceState.getInt("scoreAway");
+        outs = savedInstanceState.getInt("outs");
+        inning = savedInstanceState.getInt("inning");
+        isTop = savedInstanceState.getBoolean("isTop");
+
+        displayHomeScore(scoreHome);
+        displayAwayScore(scoreAway);
+        displayInning();
+
+        if (isTop) {
+            displayHomeOuts();
+        } else {
+            displayAwayOuts();
+        }
     }
 }
